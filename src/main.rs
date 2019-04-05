@@ -100,16 +100,8 @@ fn get_initial_population(
     let mut population_vectors: Vec<Vec<Vec<i32>>> = vec![];
     let mut population_loads: Vec<Vec<i32>> = vec![];
     let mut cmaxs: Vec<i32> = vec![];
-    let mut base_vector: Vec<i32> = vec![];
+    let mut base_vector: Vec<i32> = (0..(jobs)).collect();
     let mut cont: i32 = -1;
-
-    loop {
-        cont += 1;
-        base_vector.push(cont);
-        if cont == (jobs - 1) {
-            break;
-        }
-    }
 
     for s in 0..100 {
         base_vector.shuffle(&mut thread_rng());
