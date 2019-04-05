@@ -38,10 +38,10 @@ fn main() {
             let tupla2 = order_population_selection(
                 &population_loads,
                 &cmaxs,
-                &size_pop,
-                &machines,
-                &n_parents,
-                &jobs,
+                size_pop,
+                machines,
+                n_parents,
+                jobs,
             );
             let mut ordered_population: Vec<i32> = tupla2.0;
             let mut parents: Vec<i32> = tupla2.1;
@@ -57,11 +57,11 @@ fn main() {
             //Generar Descendencia.
             let tuple3 = crossover_translocation(
                 &mut parents,
-                &machines,
+                machines,
                 &mut population_loads,
                 &mut population_vectors,
                 &ordered_population,
-                &jobs,
+                jobs,
                 &data,
                 &mut cmaxs,
             );
@@ -192,17 +192,17 @@ fn get_initial_population(
 fn order_population_selection(
     population_loads: &Vec<Vec<i32>>,
     cmaxs: &Vec<i32>,
-    size_pop: &i32,
-    machines: &i32,
-    n_parents: &i32,
-    jobs: &i32,
+    size_pop: i32,
+    machines: i32,
+    n_parents: i32,
+    jobs: i32,
 ) -> (Vec<i32>, Vec<i32>) {
     let mut population_index: Vec<i32> = (0..100).collect();
     let mut ordered_population: Vec<i32> = Vec::new();
     let ordered_loads: Vec<i32> = quick_sort(cmaxs.to_vec());
 
-    for ele in 0..*size_pop as usize {
-        for aka in 0..*size_pop as usize {
+    for ele in 0..size_pop as usize {
+        for aka in 0..size_pop as usize {
             if ordered_loads[ele] == cmaxs[aka]
                 && ordered_population
                     .iter()
@@ -219,20 +219,20 @@ fn order_population_selection(
     let mut equals_index: Vec<i32> = Vec::new();
     let mut equals_load: Vec<i32> = Vec::new();
     for sol in 1..ordered_population.len() {
-        if population_loads[ordered_population[&sol - 1] as usize][*machines as usize]
-            == population_loads[ordered_population[sol as usize] as usize][*machines as usize]
+        if population_loads[ordered_population[&sol - 1] as usize][machines as usize]
+            == population_loads[ordered_population[sol as usize] as usize][machines as usize]
         {
             equals_index.push(ordered_population[&sol - 1]);
             equals_load.push(
                 population_loads[ordered_population[&sol - 1] as usize]
-                    [*machines as usize + 1],
+                    [machines as usize + 1],
             );
         } else {
             if equals_index.len() != 0 {
                 equals_index.push(ordered_population[sol as usize - 1]);
                 equals_load.push(
                     population_loads[ordered_population[sol as usize - 1] as usize]
-                        [*machines as usize + 1],
+                        [machines as usize + 1],
                 );
                 let ordered_equals_load: Vec<i32> = quick_sort(equals_load.to_vec());
                 let mut final_equals_load: Vec<i32> = Vec::new();
@@ -240,7 +240,7 @@ fn order_population_selection(
                     for aka in 0..ordered_equals_load.len() as usize {
                         if ordered_equals_load[ele]
                             == population_loads[equals_index[aka as usize] as usize]
-                                [*machines as usize + 1]
+                                [machines as usize + 1]
                             && final_equals_load
                                 .iter()
                                 .filter(|&n| *n == equals_index[aka as usize])
@@ -271,15 +271,15 @@ fn order_population_selection(
     let mut probs: Vec<f64> = Vec::new();
     for sol in population_loads {
         sum = sum
-            + (population_loads[ordered_population[*jobs as usize - 1] as usize]
-                [*machines as usize]
-                - sol[*machines as usize]) as f64;
+            + (population_loads[ordered_population[jobs as usize - 1] as usize]
+                [machines as usize]
+                - sol[machines as usize]) as f64;
     }
     for sol in &ordered_population {
         probs.push(
-            (population_loads[ordered_population[*jobs as usize - 1] as usize]
-                [*machines as usize]
-                - population_loads[*sol as usize][*machines as usize]) as f64
+            (population_loads[ordered_population[jobs as usize - 1] as usize]
+                [machines as usize]
+                - population_loads[*sol as usize][machines as usize]) as f64
                 / sum,
         )
     }
@@ -293,7 +293,7 @@ fn order_population_selection(
             sum_probs.push(sum_probs[ind - 1 as usize] + probs[ind as usize])
         }
     }
-    for p in 0..*n_parents {
+    for p in 0..n_parents {
         let pa: f64 = rng.gen::<f64>();
         for ind in 0..100 {
             if pa <= sum_probs[ind as usize] {
@@ -335,11 +335,11 @@ fn quick_sort(mut vector: Vec<i32>) -> Vec<i32> {
 
 fn crossover_translocation(
     parents: &mut Vec<i32>,
-    machines: &i32,
+    machines: i32,
     population_loads: &mut Vec<Vec<i32>>,
     population_vectors: &mut Vec<Vec<Vec<i32>>>,
     ordered_population: &Vec<i32>,
-    jobs: &i32,
+    jobs: i32,
     data: &Vec<Vec<i32>>,
     cmaxs: &mut Vec<i32>,
 ) -> (Vec<Vec<Vec<i32>>>, Vec<Vec<i32>>, Vec<i32>) {
@@ -387,7 +387,7 @@ fn crossover_translocation(
         let mut new_order_parents: Vec<i32> = Vec::new();
 
         let cp = rng.gen_range(1, machines - 1);
-        for gene in 0..*machines {
+        for gene in 0..machines {
             child1.push(vec![]);
             child2.push(vec![]);
             load_c1.push(0);
@@ -450,7 +450,7 @@ fn crossover_translocation(
         for j in cont_j_c1_remove {
             let mut m: i32 = load_c1[0] + data[j as usize][0];
             let mut h = 0 as usize;
-            for i in 1..*machines {
+            for i in 1..machines {
                 if load_c1[i as usize] + data[j as usize][i as usize] < m {
                     h = i as usize;
                     m = load_c1[i as usize] + data[j as usize][i as usize]
@@ -463,7 +463,7 @@ fn crossover_translocation(
         for j in cont_j_c2_remove {
             let mut m: i32 = load_c2[0] + data[j as usize][0];
             let mut h = 0 as usize;
-            for i in 1..*machines {
+            for i in 1..machines {
                 if load_c2[i as usize] + data[j as usize][i as usize] < m {
                     h = i as usize;
                     m = load_c2[i as usize] + data[j as usize][i as usize]
@@ -476,7 +476,7 @@ fn crossover_translocation(
         //Evaluación para ver si la encontré cruza
         let mut cmax1: i32 = load_c1[0];
         let mut cmax2: i32 = load_c2[0];
-        for k in 1..*machines {
+        for k in 1..machines {
             if load_c1[k as usize] > cmax1 {
                 cmax1 = load_c1[k as usize];
             }
@@ -486,7 +486,7 @@ fn crossover_translocation(
         }
         let mut cont1 = 0;
         let mut cont2 = 0;
-        for o in 1..*machines {
+        for o in 1..machines {
             if load_c1[o as usize] == cmax1 {
                 cont1 += 1;
             }
@@ -531,12 +531,12 @@ fn crossover_translocation(
         for j in &released_jobs_c1 {
             if rng.gen::<f64>() <= 0.005 {
                 //Crear arreglo con las máquinas aleatoreas, recorrerlas y asignarlo el trabajo a la primera maquina que genere un Si menor que Cmax
-                let mut shuffle_machines: Vec<i32> = (0..*machines).collect();
+                let mut shuffle_machines: Vec<i32> = (0..machines).collect();
                 shuffle_machines.shuffle(&mut thread_rng());
                 let mut bn: bool = true;
                 for i in shuffle_machines {
                     if load_c1[i as usize] + data[*j as usize][i as usize]
-                        < load_c1[*machines as usize]
+                        < load_c1[machines as usize]
                     {
                         child1[i as usize].push(*j as i32);
                         load_c1[i as usize] = load_c1[i as usize] + data[*j as usize][i as usize];
@@ -552,7 +552,7 @@ fn crossover_translocation(
             } else {
                 let mut m: i32 = load_c1[0] + data[*j as usize][0];
                 let mut h = 0 as usize;
-                for i in 1..*machines {
+                for i in 1..machines {
                     if load_c1[i as usize] + data[*j as usize][i as usize] < m {
                         h = i as usize;
                         m = load_c1[i as usize] + data[*j as usize][i as usize]
@@ -591,12 +591,12 @@ fn crossover_translocation(
         for j in &released_jobs_c2 {
             if rng.gen::<f64>() <= 0.005 {
                 //Crear arreglo con las máquinas aleatoreas, recorrerlas y asignarlo el trabajo a la primera maquina que genere un Si menor que Cmax
-                let mut shuffle_machines: Vec<i32> = (0..*machines).collect();
+                let mut shuffle_machines: Vec<i32> = (0..machines).collect();
                 shuffle_machines.shuffle(&mut thread_rng());
                 let mut bn: bool = true;
                 for i in shuffle_machines {
                     if load_c2[i as usize] + data[*j as usize][i as usize]
-                        < load_c2[*machines as usize]
+                        < load_c2[machines as usize]
                     {
                         child2[i as usize].push(*j as i32);
                         load_c2[i as usize] = load_c2[i as usize] + data[*j as usize][i as usize];
@@ -612,7 +612,7 @@ fn crossover_translocation(
             } else {
                 let mut m: i32 = load_c2[0] + data[*j as usize][0];
                 let mut h = 0 as usize;
-                for i in 1..*machines {
+                for i in 1..machines {
                     if load_c2[i as usize] + data[*j as usize][i as usize] < m {
                         h = i as usize;
                         m = load_c2[i as usize] + data[*j as usize][i as usize]
@@ -626,7 +626,7 @@ fn crossover_translocation(
         //Evaluación para ver si la encontré cruza
         cmax1 = load_c1[0];
         cmax2 = load_c2[0];
-        for k in 1..*machines {
+        for k in 1..machines {
             if load_c1[k as usize] > cmax1 {
                 cmax1 = load_c1[k as usize];
             }
@@ -636,7 +636,7 @@ fn crossover_translocation(
         }
         cont1 = 0;
         cont2 = 0;
-        for o in 1..*machines {
+        for o in 1..machines {
             if load_c1[o as usize] == cmax1 {
                 cont1 += 1;
             }
@@ -644,10 +644,10 @@ fn crossover_translocation(
                 cont2 += 1;
             }
         }
-        load_c1[*machines as usize] = cmax1;
-        load_c1[*machines as usize + 1] = cont1;
-        load_c2[*machines as usize] = cmax2;
-        load_c2[*machines as usize + 1] = cont2;
+        load_c1[machines as usize] = cmax1;
+        load_c1[machines as usize + 1] = cont1;
+        load_c2[machines as usize] = cmax2;
+        load_c2[machines as usize + 1] = cont2;
         offspring_vectors.push(child1);
         offspring_vectors.push(child2);
         offspring_loads.push(load_c1);
