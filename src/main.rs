@@ -17,6 +17,7 @@ fn main() {
     let machines: i32 = tupla.2;
     let jobs: i32 = tupla.1;
     let data: Vec<Vec<i32>> = tupla.0;
+    let x =0;
 
     //Get initial population
     //Return vectores, cargas y bool
