@@ -89,22 +89,22 @@ fn main() {
 }
 
 fn get_initial_population(
-    jobs: i32,
-    machines: i32,
+    jobs: usize,
+    machines: usize,
     datos: &Vec<Vec<i32>>,
 ) -> (Vec<Vec<Vec<i32>>>, Vec<Vec<i32>>, Vec<i32>, bool) {
     let mut population_vectors = vec![];
     let mut population_loads = vec![];
     let mut cmaxs = vec![];
-    let mut base_vector: Vec<i32> = (0..(jobs)).collect();
-    let mut cont = -1;
+    let mut base_vector: Vec<usize> = (0..jobs).collect();
 
     for s in 0..100 {
         base_vector.shuffle(&mut thread_rng());
         let mut sol = vec![];
         let mut load = vec![];
-        //Inicialiar arreglos
-        cont = 0;
+
+        // Inicialiar arreglos
+        let mut cont = 0;
         loop {
             cont += 1;
             sol.push(vec![]);
@@ -113,6 +113,7 @@ fn get_initial_population(
                 break;
             }
         }
+
         //Dejamos min() aquí, para no andar pasando de un lado para otro la matriz de datos
         let mut k = 0 as usize;
         loop {
@@ -181,10 +182,10 @@ fn order_population_selection(
     population_loads: &Vec<Vec<i32>>,
     cmaxs: &Vec<i32>,
     size_pop: i32,
-    machines: i32,
+    machines: usize,
     n_parents: i32,
-    jobs: i32,
-) -> (Vec<i32>, Vec<i32>) {
+    jobs: usize,
+) -> (Vec<usize>, Vec<usize>) {
     let mut population_index: Vec<i32> = (0..100).collect();
     let mut ordered_population = Vec::new();
     let ordered_loads = quick_sort(cmaxs.to_vec());
@@ -194,11 +195,11 @@ fn order_population_selection(
             if ordered_loads[ele] == cmaxs[aka]
                 && ordered_population
                     .iter()
-                    .filter(|&n| *n == aka as i32)
+                    .filter(|&n| *n == aka)
                     .count()
                     == 0
             {
-                ordered_population.push(aka as i32);
+                ordered_population.push(aka);
                 break;
             }
         }
@@ -322,15 +323,15 @@ fn quick_sort(mut vector: Vec<i32>) -> Vec<i32> {
 }
 
 fn crossover_translocation(
-    parents: &mut Vec<i32>,
-    machines: i32,
+    parents: &mut Vec<usize>,
+    machines: usize,
     population_loads: &mut Vec<Vec<i32>>,
     population_vectors: &mut Vec<Vec<Vec<i32>>>,
-    ordered_population: &Vec<i32>,
-    jobs: i32,
+    ordered_population: &Vec<usize>,
+    jobs: usize,
     data: &Vec<Vec<i32>>,
     cmaxs: &mut Vec<i32>,
-) -> (Vec<Vec<Vec<i32>>>, Vec<Vec<i32>>, Vec<i32>) {
+) -> (Vec<Vec<Vec<i32>>>, Vec<Vec<i32>>, Vec<usize>) {
     let mut offspring_vectors = Vec::new();
     let mut offspring_loads = Vec::new();
     let mut rng = rand::thread_rng();
@@ -339,6 +340,7 @@ fn crossover_translocation(
     let mut f = 0;
     let mut f1 = 0;
     let mut f2 = 0;
+
     while f < parents.len() as usize {
         f1 = parents[f];
         f += 1;
@@ -517,7 +519,7 @@ fn crossover_translocation(
         for j in &released_jobs_c1 {
             if rng.gen::<f64>() <= 0.005 {
                 //Crear arreglo con las máquinas aleatoreas, recorrerlas y asignarlo el trabajo a la primera maquina que genere un Si menor que Cmax
-                let mut shuffle_machines: Vec<i32> = (0..machines).collect();
+                let mut shuffle_machines: Vec<usize> = (0..machines).collect();
                 shuffle_machines.shuffle(&mut thread_rng());
                 let mut bn = true;
                 for i in shuffle_machines {
@@ -577,7 +579,7 @@ fn crossover_translocation(
         for j in &released_jobs_c2 {
             if rng.gen::<f64>() <= 0.005 {
                 //Crear arreglo con las máquinas aleatoreas, recorrerlas y asignarlo el trabajo a la primera maquina que genere un Si menor que Cmax
-                let mut shuffle_machines: Vec<i32> = (0..machines).collect();
+                let mut shuffle_machines: Vec<usize> = (0..machines).collect();
                 shuffle_machines.shuffle(&mut thread_rng());
                 let mut bn = true;
                 for i in shuffle_machines {

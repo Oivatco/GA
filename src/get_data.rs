@@ -4,7 +4,7 @@ use std::io::BufReader;
 use std::iter::Iterator;
 use std::vec::Vec;
 
-pub fn run() -> (Vec<Vec<i32>>, i32, i32) {
+pub fn run() -> (Vec<Vec<i32>>, usize, usize) {
     let file = File::open("111.txt").expect("ñooo");
     let mut buf_reader = BufReader::new(file);
 
@@ -13,7 +13,7 @@ pub fn run() -> (Vec<Vec<i32>>, i32, i32) {
 
     buf_reader.read_line(&mut first_line).expect("No hay ni una línea");
 
-    let numbers: Vec<i32> = first_line.split_whitespace().map(|x| x.parse().unwrap()).collect();
+    let numbers: Vec<usize> = first_line.split_whitespace().map(|x| x.parse().unwrap()).collect();
 
     let jobs = numbers[0];
     let machines = numbers[1];
