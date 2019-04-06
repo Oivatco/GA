@@ -11,23 +11,30 @@ pub fn run() -> (Vec<Vec<i32>>, usize, usize) {
     // first line contains number of jobs, number of machines
     let mut first_line = String::new();
 
-    buf_reader.read_line(&mut first_line).expect("No hay ni una línea");
+    buf_reader
+        .read_line(&mut first_line)
+        .expect("No hay ni una línea");
 
-    let numbers: Vec<usize> = first_line.split_whitespace().map(|x| x.parse().unwrap()).collect();
+    let numbers: Vec<usize> = first_line
+        .split_whitespace()
+        .map(|x| x.parse().unwrap())
+        .collect();
 
     let jobs = numbers[0];
     let machines = numbers[1];
     let mut data = Vec::with_capacity(jobs);
 
     // second line is useless
-    buf_reader.read_line(&mut first_line).expect("No hay segunda línea");
+    buf_reader
+        .read_line(&mut first_line)
+        .expect("No hay segunda línea");
 
     for line in buf_reader.lines().map(|l| l.unwrap()) {
         let vec: Vec<i32> = line
             .trim()
             .split_whitespace()
             .enumerate()
-            .filter(|(i, e)| i%2 == 1)
+            .filter(|(i, e)| i % 2 == 1)
             .map(|(i, e)| e.parse().unwrap())
             .collect();
 

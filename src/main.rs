@@ -123,7 +123,7 @@ fn get_initial_population(
             let mut i = 0;
             loop {
                 i += 1;
-                if i == machines{
+                if i == machines {
                     break;
                 }
                 if load[i] + datos[b][i] < m {
@@ -134,7 +134,7 @@ fn get_initial_population(
             sol[h].push(b);
             load[h] = load[h] + datos[b][h];
             k += 1;
-            if k == jobs{
+            if k == jobs {
                 break;
             }
         }
@@ -149,7 +149,7 @@ fn get_initial_population(
                 cmin = load[k];
             }
             k += 1;
-            if k == machines{
+            if k == machines {
                 break;
             }
         }
@@ -160,7 +160,7 @@ fn get_initial_population(
                 cont += 1;
             }
             o += 1;
-            if o == machines{
+            if o == machines {
                 break;
             }
         }
@@ -193,11 +193,7 @@ fn order_population_selection(
     for ele in 0..size_pop {
         for aka in 0..size_pop {
             if ordered_loads[ele] == cmaxs[aka]
-                && ordered_population
-                    .iter()
-                    .filter(|&n| *n == aka)
-                    .count()
-                    == 0
+                && ordered_population.iter().filter(|&n| *n == aka).count() == 0
             {
                 ordered_population.push(aka);
                 break;
@@ -212,24 +208,17 @@ fn order_population_selection(
             == population_loads[ordered_population[sol]][machines]
         {
             equals_index.push(ordered_population[&sol - 1]);
-            equals_load.push(
-                population_loads[ordered_population[&sol - 1]]
-                    [machines+ 1],
-            );
+            equals_load.push(population_loads[ordered_population[&sol - 1]][machines + 1]);
         } else {
             if equals_index.len() != 0 {
-                equals_index.push(ordered_population[sol- 1]);
-                equals_load.push(
-                    population_loads[ordered_population[sol- 1]]
-                        [machines+ 1],
-                );
+                equals_index.push(ordered_population[sol - 1]);
+                equals_load.push(population_loads[ordered_population[sol - 1]][machines + 1]);
                 let ordered_equals_load = quick_sort(equals_load.to_vec());
                 let mut final_equals_load = Vec::new();
-                for ele in 0..ordered_equals_load.len(){
-                    for aka in 0..ordered_equals_load.len(){
+                for ele in 0..ordered_equals_load.len() {
+                    for aka in 0..ordered_equals_load.len() {
                         if ordered_equals_load[ele]
-                            == population_loads[equals_index[aka]]
-                                [machines+ 1]
+                            == population_loads[equals_index[aka]][machines + 1]
                             && final_equals_load
                                 .iter()
                                 .filter(|&n| *n == equals_index[aka])
@@ -259,15 +248,12 @@ fn order_population_selection(
     let mut sum = 0.0;
     let mut probs = Vec::new();
     for sol in population_loads {
-        sum = sum
-            + (population_loads[ordered_population[jobs- 1]]
-                [machines]
-                - sol[machines]) as f64;
+        sum =
+            sum + (population_loads[ordered_population[jobs - 1]][machines] - sol[machines]) as f64;
     }
     for sol in &ordered_population {
         probs.push(
-            (population_loads[ordered_population[jobs- 1]]
-                [machines]
+            (population_loads[ordered_population[jobs - 1]][machines]
                 - population_loads[*sol][machines]) as f64
                 / sum,
         )
@@ -275,7 +261,7 @@ fn order_population_selection(
     let mut rng = rand::thread_rng();
     let mut parents = Vec::new();
     let mut sum_probs = Vec::new();
-    for ind in 0..100{
+    for ind in 0..100 {
         if ind == 0 {
             sum_probs.push(probs[ind])
         } else {
@@ -341,7 +327,7 @@ fn crossover_translocation(
     let mut f1 = 0;
     let mut f2 = 0;
 
-    while f < parents.len(){
+    while f < parents.len() {
         f1 = parents[f];
         f += 1;
         if parents[f] != f1 {
@@ -382,35 +368,29 @@ fn crossover_translocation(
             load_c2.push(0);
             if gene < cp {
                 //Genes del padre 1 a hijo uno
-                for j in &population_vectors[ordered_population[f1]][gene]
-                {
-                    if cont_j_c1_remove.iter().filter(|&n| *n == *j).count() == 1{
+                for j in &population_vectors[ordered_population[f1]][gene] {
+                    if cont_j_c1_remove.iter().filter(|&n| *n == *j).count() == 1 {
                         child1[gene].push(*j);
                         //remove element form vector
                         cont_j_c1_remove.retain(|&x| x != *j);
                     }
                 }
-                load_c1[gene] =
-                    population_loads[ordered_population[f1]][gene];
+                load_c1[gene] = population_loads[ordered_population[f1]][gene];
 
                 //Genes del padre 2 a hijo dos
-                for j in &population_vectors[ordered_population[f2]][gene]
-                {
-                    if cont_j_c2_remove.iter().filter(|&n| *n == *j).count() == 1{
+                for j in &population_vectors[ordered_population[f2]][gene] {
+                    if cont_j_c2_remove.iter().filter(|&n| *n == *j).count() == 1 {
                         child2[gene].push(*j);
                         //remove element form vector
                         cont_j_c2_remove.retain(|&x| x != *j);
                     }
                 }
-                load_c2[gene] =
-                    population_loads[ordered_population[f2]][gene];
+                load_c2[gene] = population_loads[ordered_population[f2]][gene];
             } else {
                 let mut load1 = 0;
                 //Genes del padre 2 a padre uno
-                for j in
-                    &population_vectors[ordered_population[f2]][gene]
-                {
-                    if cont_j_c1_remove.iter().filter(|&n| *n == *j).count() == 1{
+                for j in &population_vectors[ordered_population[f2]][gene] {
+                    if cont_j_c1_remove.iter().filter(|&n| *n == *j).count() == 1 {
                         child1[gene].push(*j);
                         cont_j_c1_remove.retain(|&x| x != *j);
                         load1 = load1 + data[*j][gene];
@@ -419,10 +399,8 @@ fn crossover_translocation(
                 load_c1[gene] = load1;
                 let mut load2 = 0;
                 //Genes del padre 1 a padre dos
-                for j in
-                    &population_vectors[ordered_population[f1]][gene]
-                {
-                    if cont_j_c2_remove.iter().filter(|&n| *n == *j).count() == 1{
+                for j in &population_vectors[ordered_population[f1]][gene] {
+                    if cont_j_c2_remove.iter().filter(|&n| *n == *j).count() == 1 {
                         child2[gene].push(*j);
                         //remove element form vector
                         cont_j_c2_remove.retain(|&x| x != *j);
@@ -495,23 +473,20 @@ fn crossover_translocation(
         let mut gene_load = 0;
 
         for gene in &mut child1 {
-            if gene.len() < base{
+            if gene.len() < base {
                 ind = rng.gen_range(0, gene.len());
                 released_jobs_c1.push(gene[ind]);
-                load_c1[gene_load] = load_c1[gene_load]
-                    - data[gene[ind]][gene_load];
+                load_c1[gene_load] = load_c1[gene_load] - data[gene[ind]][gene_load];
                 gene.remove(ind);
             } else {
                 ind = rng.gen_range(0, gene.len());
                 released_jobs_c1.push(gene[ind]);
-                load_c1[gene_load] = load_c1[gene_load]
-                    - data[gene[ind]][gene_load];
+                load_c1[gene_load] = load_c1[gene_load] - data[gene[ind]][gene_load];
                 gene.remove(ind);
 
                 ind = rng.gen_range(0, gene.len());
                 released_jobs_c1.push(gene[ind]);
-                load_c1[gene_load] = load_c1[gene_load]
-                    - data[gene[ind]][gene_load];
+                load_c1[gene_load] = load_c1[gene_load] - data[gene[ind]][gene_load];
                 gene.remove(ind);
             }
             gene_load += 1;
@@ -523,9 +498,7 @@ fn crossover_translocation(
                 shuffle_machines.shuffle(&mut thread_rng());
                 let mut bn = true;
                 for i in shuffle_machines {
-                    if load_c1[i] + data[*j][i]
-                        < load_c1[machines]
-                    {
+                    if load_c1[i] + data[*j][i] < load_c1[machines] {
                         child1[i].push(*j);
                         load_c1[i] = load_c1[i] + data[*j][i];
                         bn = false;
@@ -534,8 +507,7 @@ fn crossover_translocation(
                 if bn == true {
                     let random_i = rng.gen_range(0, machines);
                     child1[random_i].push(*j);
-                    load_c1[random_i] =
-                        load_c1[random_i] + data[*j][random_i];
+                    load_c1[random_i] = load_c1[random_i] + data[*j][random_i];
                 }
             } else {
                 let mut m = load_c1[0] + data[*j][0];
@@ -554,23 +526,20 @@ fn crossover_translocation(
         let mut released_jobs_c2 = Vec::new();
         gene_load = 0;
         for gene in &mut child2 {
-            if gene.len() < base{
+            if gene.len() < base {
                 ind = rng.gen_range(0, gene.len());
                 released_jobs_c2.push(gene[ind]);
-                load_c2[gene_load] = load_c2[gene_load]
-                    - data[gene[ind]][gene_load];
+                load_c2[gene_load] = load_c2[gene_load] - data[gene[ind]][gene_load];
                 gene.remove(ind);
             } else {
                 ind = rng.gen_range(0, gene.len());
                 released_jobs_c2.push(gene[ind]);
-                load_c2[gene_load] = load_c2[gene_load]
-                    - data[gene[ind]][gene_load];
+                load_c2[gene_load] = load_c2[gene_load] - data[gene[ind]][gene_load];
                 gene.remove(ind);
 
                 ind = rng.gen_range(0, gene.len());
                 released_jobs_c2.push(gene[ind]);
-                load_c2[gene_load] = load_c2[gene_load]
-                    - data[gene[ind]][gene_load];
+                load_c2[gene_load] = load_c2[gene_load] - data[gene[ind]][gene_load];
                 gene.remove(ind);
             }
             gene_load += 1;
@@ -583,9 +552,7 @@ fn crossover_translocation(
                 shuffle_machines.shuffle(&mut thread_rng());
                 let mut bn = true;
                 for i in shuffle_machines {
-                    if load_c2[i] + data[*j][i]
-                        < load_c2[machines]
-                    {
+                    if load_c2[i] + data[*j][i] < load_c2[machines] {
                         child2[i].push(*j);
                         load_c2[i] = load_c2[i] + data[*j][i];
                         bn = false;
@@ -594,8 +561,7 @@ fn crossover_translocation(
                 if bn == true {
                     let random_i = rng.gen_range(0, machines);
                     child2[random_i].push(*j);
-                    load_c2[random_i] =
-                        load_c2[random_i] + data[*j][random_i];
+                    load_c2[random_i] = load_c2[random_i] + data[*j][random_i];
                 }
             } else {
                 let mut m = load_c2[0] + data[*j][0];
@@ -633,9 +599,9 @@ fn crossover_translocation(
             }
         }
         load_c1[machines] = cmax1;
-        load_c1[machines+ 1] = cont1;
+        load_c1[machines + 1] = cont1;
         load_c2[machines] = cmax2;
-        load_c2[machines+ 1] = cont2;
+        load_c2[machines + 1] = cont2;
         offspring_vectors.push(child1);
         offspring_vectors.push(child2);
         offspring_loads.push(load_c1);
