@@ -647,14 +647,12 @@ fn crossover_translocation(
     (offspring_vectors, offspring_loads, parents_new_order)
 }
 
-fn is_feasible(vector: Vec<Vec<i32>>, jobs: i32) -> bool {
+fn is_feasible(vector: Vec<Vec<i32>>, jobs: usize) -> bool {
     let mut sum = 0;
+
     for gene in vector {
-        sum = sum + gene.len() as i32;
+        sum = sum + gene.len();
     }
-    if sum == jobs {
-        return true;
-    } else {
-        return false;
-    }
+
+    sum == jobs
 }
