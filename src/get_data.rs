@@ -17,7 +17,7 @@ pub fn run() -> (Vec<Vec<i32>>, i32, i32) {
 
     let jobs = numbers[0];
     let machines = numbers[1];
-    let mut data: Vec<Vec<i32>> = Vec::with_capacity(jobs as usize);
+    let mut data = Vec::with_capacity(jobs as usize);
 
     // second line is useless
     buf_reader.read_line(&mut first_line).expect("No hay segunda línea");
